@@ -48,6 +48,10 @@ public:
 	virtual void notify(const std::string& msg) { meta[msg.substr(0, msg.find('='))] = { msg.substr(msg.find('=') + 1) }; }
 	virtual std::string name() const { return property("name"); }
 	virtual std::string role() const { return property("role"); }
+	//select search
+	virtual std::string search() const { return property("search"); }
+	//simulation times
+	virtual std::string simulation() const { return property("simulation"); }
 
 protected:
 	typedef std::string key;
@@ -318,6 +322,17 @@ public:
 		if (role() == "white") who = board::white;
 		if (who == board::empty)
 			throw std::invalid_argument("invalid role: " + role());
+		// search method
+		if(args.find("search") != std::string::npos)
+			if (search() == "MCTS" ) activate_MCTS = true;
+			else if (search() == "random") activate_MCTS = false;
+		// simulation counts
+		if(args.find("simulation") != std::string::npos){
+			if (std::stoi(simulation()) > 0)
+				simulation_count = std::stoi(simulation());
+			else
+				throw std::invalid_argument("invalid simulation: " + simulation());
+		}
 		for (size_t i = 0; i < space.size(); i++)
 			space[i] = action::place(i, who);
 	}
@@ -336,18 +351,19 @@ public:
 	}
 
 	virtual action take_action(const board& state) {
-		/*
-		//test
-		std::shuffle(space.begin(), space.end(), engine);
-		for (const action::place& move : space) {
-			board after = state;
-			if (move.apply(after) == board::legal)
-				return move;
-		}
-		return action();
-		*/
 
-		printf("take turn!!!\n");
+		if(activate_MCTS == false){
+			//test
+			std::shuffle(space.begin(), space.end(), engine);
+			for (const action::place& move : space) {
+				board after = state;
+				if (move.apply(after) == board::legal)
+					return move;
+			}
+			return action();
+		}
+
+		//printf("take turn!!!\n");
 
 		size_t total_counts = 0;
 		const auto start_time = hclock::now();
@@ -522,16 +538,20 @@ public:
 
 			//printf("%d\n", total_counts);
 
-		}while(++total_counts < 100 &&
+		}while(++total_counts < simulation_count &&
              (hclock::now() - start_time) < std::chrono::seconds(1));
 
-		printf("leave \n");
+		//printf("leave \n");
 
 		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               hclock::now() - start_time)
                               .count();
+		/*
     	std::cerr << duration << " ms" << std::endl
               << total_counts << " simulations" << std::endl;
+		*/
+
+		std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
 
 		/*
 		if(root->is_leaf_){
@@ -553,17 +573,16 @@ public:
 		int max = root->get_best_move();
 		root = &root->children_[max];
 		int tmp = last_board.place(root->pos_, who);
-		return action::place(root->pos_, who);
+		if(tmp == board::legal)
+			return action::place(root->pos_, who);
 
-		//int tmp = last_board.place(best_move, who);
-		//printf("best move: %d, %d, tmp = %d\n", best_move.x, best_move.y, tmp);
-		//return action::place(best_move, who);
-
+		return action();
 	}
 
 private:
 	std::vector<action::place> space;
 	board::piece_type who;
+	bool activate_MCTS = true;
 	board last_board;
 	Node *root = nullptr;
 	bool first_time = true;
@@ -573,4 +592,6 @@ private:
 	std::vector<empty_pos> emp_pos_vec;
 	int emp_pos_vec_size = 0;
 	int emp_pos_count = 0;
+
+	int simulation_count = 100;
 };

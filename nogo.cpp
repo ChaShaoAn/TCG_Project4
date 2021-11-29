@@ -63,10 +63,11 @@ int main(int argc, const char* argv[]) {
 		summary |= stat.is_finished();
 	}
 
-	player black("name=black " + black_args + " role=black");
+	//player black("name=black " + black_args + " role=black");
 	//player white("name=white " + white_args + " role=white");
-	//MCTSAgent black("name=black " + black_args + " role=black");
+	MCTSAgent black("name=black " + black_args + " role=black");
 	MCTSAgent white("name=white " + white_args + " role=white");
+
 
 	if (!shell) { // launch standard local games
 		while (!stat.is_finished()) {
@@ -79,12 +80,11 @@ int main(int argc, const char* argv[]) {
 				agent& who = game.take_turns(black, white);
 				action move = who.take_action(game.state());
 				if (game.apply_action(move) != true) break;
+				//std::cout << game.state() << std::endl;
 				if (who.check_for_win(game.state())) break;
 			}
 			agent& win = game.last_turns(black, white);
 			stat.close_episode(win.name());
-
-			printf("%s\n", win.name());
 
 			black.close_episode(win.name());
 			white.close_episode(win.name());
