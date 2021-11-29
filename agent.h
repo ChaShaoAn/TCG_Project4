@@ -20,10 +20,6 @@
 #include <fstream>
 #include <set>
 
-template<typename T, typename... Args>
-std::unique_ptr< T > make_unique(Args&&... args) {
-    return std::unique_ptr< T >(new T(std::forward<Args>(args)...));
-}
 
 struct empty_pos
 {
@@ -159,7 +155,9 @@ public:
 
 		board::piece_type child_bw;
 		child_bw = (bw_ == board::black)?board::white:board::black;
-		children_ = std::make_unique<Node[]>(emp_pos_count);
+		// make_unique is invalid in C++ 11, and tcglinux is C++ 11, not C++ 14!!!
+		//children_ = std::make_unique<Node[]>(emp_pos_count);
+		children_ = new Node[emp_pos_count];
 		//for (const action::place& move : space) {
 		for (const empty_pos &move : emp_pos_vec) {
 			//if(b[move.position().x][move.position().y] != 0){
@@ -301,7 +299,10 @@ public:
 		*/
    	}
    	size_t children_size_ = 0;
-   	std::unique_ptr<Node[]> children_;
+	// make_unique is invalid in C++ 11, and tcglinux is C++ 11, not C++ 14!!!
+	// So use *children_ instead!!!
+   	//std::unique_ptr<Node[]> children_;
+	Node *children_;
 	board::point pos_;
 	board::piece_type bw_;
 	bool root_ = false;
@@ -598,5 +599,5 @@ private:
 	int emp_pos_vec_size = 0;
 	int emp_pos_count = 0;
 
-	int simulation_count = 100;
+	int simulation_count = 200;
 };
