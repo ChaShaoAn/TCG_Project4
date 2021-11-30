@@ -343,7 +343,20 @@ public:
 			space[i] = action::place(i, who);
 	}
 
+	void deleteNode(Node *root){
+		if(root != nullptr){
+			for(size_t i = 0; i < root->children_size_; i++){
+				deleteNode(&root->children_[i]);
+			}
+			if(root->children_size_ == 0) return;
+			delete[] root->children_;
+		}
+	}
+
 	virtual void close_episode(const std::string& flag = "") {
+		//delete whole tree
+		deleteNode(init_root);
+		delete init_root;
 		first_time = true;
 		emp_pos_vec.clear();
 		std::vector <empty_pos>().swap(emp_pos_vec);    //清除容器并最小化它的容量，
@@ -380,6 +393,7 @@ public:
 			last_layout = layout;
 			root = new Node();
 			root->init_root();
+			init_root = root;
 			
 			if(who == board::black){
 				root->init_bw(board::white);
@@ -435,7 +449,7 @@ public:
 				}
 			}
 			if(find_child == false){
-				//delete root;
+				delete root;
 				root = new Node();
 				if(who == board::black){
 					root->init_bw(board::white);
@@ -547,7 +561,7 @@ public:
 		}while(++total_counts < simulation_count &&
              (hclock::now() - start_time) < std::chrono::seconds(1));
 
-		//printf("leave \n");
+		//}while(++total_counts < simulation_count);
 
 		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               hclock::now() - start_time)
@@ -591,6 +605,7 @@ private:
 	bool activate_MCTS = true;
 	board last_board;
 	Node *root = nullptr;
+	Node *init_root = nullptr;
 	bool first_time = true;
 	board::grid last_layout;
 	board::grid layout;
@@ -599,5 +614,5 @@ private:
 	int emp_pos_vec_size = 0;
 	int emp_pos_count = 0;
 
-	int simulation_count = 200;
+	int simulation_count = 50000;
 };
