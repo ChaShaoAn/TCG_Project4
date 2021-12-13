@@ -571,7 +571,8 @@ public:
               << total_counts << " simulations" << std::endl;
 		*/
 
-		std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
+		//print while testing
+		//std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
 
 		/*
 		if(root->is_leaf_){
