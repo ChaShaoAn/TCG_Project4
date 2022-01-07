@@ -571,7 +571,8 @@ public:
 		//}while(++total_counts < simulation_count &&
         //     (hclock::now() - start_time) < std::chrono::seconds(1));
 			total_counts++;
-		}while((hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
+		}while(total_counts < simulation_count &&
+				(hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
 
 		//}while(++total_counts < simulation_count);
 
@@ -630,7 +631,7 @@ private:
 	int emp_pos_vec_size = 0;
 	int emp_pos_count = 0;
 
-	int simulation_count = 50000;
+	int simulation_count = 100000;
 
 	int simulation_time[40] = {15, 15, 14, 14, 13, 13, 12, 12, 11, 11,
 							   10, 10, 10, 10, 10, 10, 10, 10, 9, 9,
