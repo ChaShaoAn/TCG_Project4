@@ -355,11 +355,6 @@ public:
 
 	virtual void open_episode(const std::string& flag = ""){
 		simulation_episode = 0;
-		int total_time = 0;
-		for(int i = 0; i <36; i ++){
-			total_time += simulation_time[i];
-		}
-		printf("total_time: %d\n", total_time);
 	}
 
 	virtual void close_episode(const std::string& flag = "") {
@@ -568,8 +563,9 @@ public:
 
 			//printf("%d\n", total_counts);
 
-		}while(++total_counts < simulation_count &&
-             (hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
+		//}while(++total_counts < simulation_count &&
+        //     (hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
+		}while((hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
 
 		//}while(++total_counts < simulation_count);
 
