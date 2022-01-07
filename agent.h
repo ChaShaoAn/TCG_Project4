@@ -565,6 +565,7 @@ public:
 
 		//}while(++total_counts < simulation_count &&
         //     (hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
+			total_counts++;
 		}while((hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
 
 		//}while(++total_counts < simulation_count);
