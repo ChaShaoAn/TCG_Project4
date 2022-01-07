@@ -353,6 +353,15 @@ public:
 		}
 	}
 
+	virtual void open_episode(const std::string& flag = ""){
+		simulation_episode = 0;
+		int total_time = 0;
+		for(int i = 0; i <36; i ++){
+			total_time += simulation_time[i];
+		}
+		printf("total_time: %d\n", total_time);
+	}
+
 	virtual void close_episode(const std::string& flag = "") {
 		//delete whole tree
 		deleteNode(init_root);
@@ -367,6 +376,7 @@ public:
 		emp_pos_count = 0;
 		if(root != nullptr)
 			root = nullptr;
+		simulation_episode = 0;
 	}
 
 	virtual action take_action(const board& state) {
@@ -559,9 +569,12 @@ public:
 			//printf("%d\n", total_counts);
 
 		}while(++total_counts < simulation_count &&
-             (hclock::now() - start_time) < std::chrono::seconds(1));
+             (hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
 
 		//}while(++total_counts < simulation_count);
+
+		//simulation time control 0117 2022
+		simulation_episode ++;
 
 		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               hclock::now() - start_time)
@@ -572,7 +585,7 @@ public:
 		*/
 
 		//print while testing
-		//std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
+		std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
 
 		/*
 		if(root->is_leaf_){
@@ -616,4 +629,11 @@ private:
 	int emp_pos_count = 0;
 
 	int simulation_count = 50000;
+
+	int simulation_time[40] = {15, 15, 14, 14, 13, 13, 12, 12, 11, 11,
+							   10, 10, 10, 10, 10, 10, 10, 10, 9, 9,
+							   8, 8, 7, 7, 6, 6, 5, 5, 4, 4,
+							   3, 3, 2, 2, 1, 1, 0, 0, 0, 0};
+	int simulation_episode = 0;
+	int one_second = 1;
 };
