@@ -158,6 +158,7 @@ public:
 		// make_unique is invalid in C++ 11, and tcglinux is C++ 11, not C++ 14!!!
 		//children_ = std::make_unique<Node[]>(emp_pos_count);
 		children_ = new Node[emp_pos_count];
+		release_size_ = emp_pos_count;
 		//for (const action::place& move : space) {
 		for (const empty_pos &move : emp_pos_vec) {
 			//if(b[move.position().x][move.position().y] != 0){
@@ -299,6 +300,7 @@ public:
 		*/
    	}
    	size_t children_size_ = 0;
+	size_t release_size_ = 0;
 	// make_unique is invalid in C++ 11, and tcglinux is C++ 11, not C++ 14!!!
 	// So use *children_ instead!!!
    	//std::unique_ptr<Node[]> children_;
@@ -345,7 +347,8 @@ public:
 
 	void deleteNode(Node *root){
 		if(root != nullptr){
-			for(size_t i = 0; i < root->children_size_; i++){
+			//for(size_t i = 0; i < root->children_size_; i++){
+			for(size_t i = 0; i < root->release_size_; i++){
 				deleteNode(&root->children_[i]);
 			}
 			if(root->children_size_ == 0) return;
@@ -361,6 +364,7 @@ public:
 		//delete whole tree
 		deleteNode(init_root);
 		delete init_root;
+		printf("delete root\n");
 		first_time = true;
 		emp_pos_vec.clear();
 		std::vector <empty_pos>().swap(emp_pos_vec);    //清除容器并最小化它的容量，
@@ -454,6 +458,7 @@ public:
 				}
 			}
 			if(find_child == false){
+				deleteNode(root);
 				delete root;
 				root = new Node();
 				if(who == board::black){
@@ -564,7 +569,7 @@ public:
 			//printf("%d\n", total_counts);
 
 		//}while(++total_counts < simulation_count &&
-        //     (hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
+        //     (hclock::now() - start_time) < std::chrono::seconds(1));
 			total_counts++;
 		}while((hclock::now() - start_time) < std::chrono::seconds(simulation_time[simulation_episode]));
 
