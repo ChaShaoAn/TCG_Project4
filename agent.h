@@ -580,16 +580,16 @@ public:
 		//simulation time control 0117 2022
 		simulation_episode ++;
 
-		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
-                              hclock::now() - start_time)
-                              .count();
+		//const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+        //                      hclock::now() - start_time)
+        //                      .count();
 		/*
     	std::cerr << duration << " ms" << std::endl
               << total_counts << " simulations" << std::endl;
 		*/
 
 		//print while testing
-		std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
+		//std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
 
 		/*
 		if(root->is_leaf_){
@@ -609,6 +609,17 @@ public:
 		//board::point best_move = root->get_best_move();
 
 		int max = root->get_best_move();
+		//test -> delete other nodes 0108 2022
+		for(int i = 0; i < root->release_size_; i ++){
+			if(i != max){
+				deleteNode(&root->children_[i]);
+			}
+		}
+		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+                              hclock::now() - start_time)
+                              .count();
+		std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
+		
 		root = &root->children_[max];
 		int tmp = last_board.place(root->pos_, who);
 		if(tmp == board::legal)
