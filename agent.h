@@ -249,9 +249,9 @@ public:
 		
 		for (size_t i = 0; i < children_size_; ++i) {
        		const auto &child = children_[i];
-			if(child.pos_.x == -1 && child.pos_.y == -1){
-				printf("WTF is this\n");
-			}
+			//if(child.pos_.x == -1 && child.pos_.y == -1){
+			//	printf("WTF is this\n");
+			//}
 			if (child.visits_ == 0) continue;
 			if(child.valid_ == false) continue;
        		if (child.visits_ >= max_visits) {
@@ -365,7 +365,7 @@ public:
 		//delete whole tree
 		deleteNode(init_root);
 		delete init_root;
-		printf("delete root\n");
+		//printf("delete root\n");
 		first_time = true;
 		emp_pos_vec.clear();
 		std::vector <empty_pos>().swap(emp_pos_vec);    //清除容器并最小化它的容量，
@@ -618,8 +618,8 @@ public:
 		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               hclock::now() - start_time)
                               .count();
-		std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
-		
+		//std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
+
 		root = &root->children_[max];
 		int tmp = last_board.place(root->pos_, who);
 		if(tmp == board::legal)
