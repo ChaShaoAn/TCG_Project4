@@ -451,6 +451,8 @@ public:
 				if(find_pos == true) break;
 			}
 
+			//舊方法 - 先拿掉，改成新方法	0108 2022
+			/*
 			bool find_child = false;
 			for(int i = 0; i < root->children_size_; i++){
 				if(root->children_[i].pos_.x == tmp_pos.x && root->children_[i].pos_.y == tmp_pos.y){
@@ -459,6 +461,27 @@ public:
 					break;
 				}
 			}
+			*/
+
+			//test - 取得對方移動的步後，要將其他的childnode刪除，不然會佔memory	0108 2022
+			bool find_child = false;
+			int find_next = -1;
+			for(int i = 0; i < root->release_size_; i ++){
+				if(i < root->children_size_){
+					if(root->children_[i].pos_.x == tmp_pos.x && root->children_[i].pos_.y == tmp_pos.y){
+						//root = &root->children_[i];
+						find_next = i;
+						find_child = true;
+					}
+					else{
+						deleteNode(&root->children_[i]);
+					}
+				}
+				else{
+					deleteNode(&root->children_[i]);
+				}
+			}
+
 			if(find_child == false){
 				deleteNode(root);
 				delete root;
@@ -469,6 +492,10 @@ public:
 				else{
 					root->init_bw(board::black);
 				}
+			}
+			//go to next move	0108 2022
+			else{
+				root = &root->children_[find_next];
 			}
 			//新的root，上面的就不理了
 			root->init_root();
@@ -618,10 +645,12 @@ public:
 			}
 		}
 		
+		/*
 		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               hclock::now() - start_time)
                               .count();
-		//std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
+		std::cerr << duration << " ms,\t" << total_counts << " simulations" << std::endl;
+		*/
 
 		root = &root->children_[max];
 		int tmp = last_board.place(root->pos_, who);
