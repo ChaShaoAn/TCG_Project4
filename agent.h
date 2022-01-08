@@ -351,7 +351,8 @@ public:
 			for(size_t i = 0; i < root->release_size_; i++){
 				deleteNode(&root->children_[i]);
 			}
-			if(root->children_size_ == 0) return;
+			//if(root->children_size_ == 0) return;
+			if(root->release_size_ == 0) return;
 			delete[] root->children_;
 		}
 	}
