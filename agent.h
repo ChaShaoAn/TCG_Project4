@@ -354,6 +354,7 @@ public:
 			//if(root->children_size_ == 0) return;
 			if(root->release_size_ == 0) return;
 			delete[] root->children_;
+			root->release_size_ = 0;
 		}
 	}
 
@@ -610,13 +611,13 @@ public:
 
 		int max = root->get_best_move();
 		//test -> delete other nodes 0108 2022
-		/*
+		
 		for(int i = 0; i < root->release_size_; i ++){
 			if(i != max){
 				deleteNode(&root->children_[i]);
 			}
 		}
-		*/
+		
 		const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               hclock::now() - start_time)
                               .count();
